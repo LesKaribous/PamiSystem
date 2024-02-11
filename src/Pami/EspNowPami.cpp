@@ -1,32 +1,32 @@
-#include "Esp.h"
+#include "EspNowPami.h"
 
-Esp::Esp(/* args */)
+namespace Com{
+
+EspNowPami::EspNowPami(/* args */)
 {
 
 }
 
-Esp::~Esp()
+EspNowPami::~EspNowPami()
 {
 }
 
-bool Esp::init(Robot::Pami &robot){
-  _robot = &robot;
-
+bool EspNowPami::init(){
   bool initState = false;
   bool addPeerState = true;
   bool messageState = true;
   WiFi.mode(WIFI_STA);
 
-  // Init ESP-NOW
+  // Init EspNow-NOW
   if (esp_now_init() != ESP_OK) 
   {
-    Ihm::getInstance().debug("Error init ESP-NOW !");
+    Ihm::getInstance().debug("Error init EspNow-NOW !");
     initState = false;
   } else {initState = true;}
   // Si Init OK
   if(initState == true)
   {
-    if(_robot->getID() == 1) //Si Robot Principal
+    if(Robot::robot->getID() == 1) //Si Robot Principal
     {
       esp_now_register_send_cb(OnDataSent);
       // register peer
@@ -56,16 +56,16 @@ bool Esp::init(Robot::Pami &robot){
   return initState && addPeerState && messageState;
 }
 
-void Esp::printMacAdress(){
+void EspNowPami::printMacAdress(){
   Serial.println(WiFi.macAddress());
 }
 
-bool Esp::BroadcastMessage(int orderMessage){
+bool EspNowPami::BroadcastMessage(int orderMessage){
 
   bool sendState = true;
   message.order = orderMessage;
 
-  if(_robot->getID() == 1)
+  if(Robot::robot->getID() == 1)
   {
     esp_err_t resultPami2 = esp_now_send(PAMI_2, (uint8_t *) &message, sizeof(message));
     esp_err_t resultPami3 = esp_now_send(PAMI_3, (uint8_t *) &message, sizeof(message));
@@ -84,7 +84,7 @@ bool Esp::BroadcastMessage(int orderMessage){
   return sendState;
 }
 
-void Esp::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
+void EspNowPami::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   char macStr[18];
   Serial.print("Packet to: ");
   // Copies the sender mac address to a string
@@ -95,18 +95,18 @@ void Esp::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 }
 
-void Esp::OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+void EspNowPami::OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   message_struct messageRecv;
   memcpy(&messageRecv, incomingData, sizeof(messageRecv));
   Serial.print("Bytes received: ");
   Serial.println(len);
   Serial.print("order: ");
   Serial.println(messageRecv.order);
-  if (messageRecv.order == Robot::State::PAIRING) robotState = PAIRED;
-  if (messageRecv.order == Robot::State::ARMED) robotState = READY;
-  if (messageRecv.order == Robot::State::MATCH_STARTED) robotState = MATCH_STARTED;
-  Serial.println(robotState);
+  if (messageRecv.order == Robot::State::PAIRING) Robot::robot->setState(Robot::State::PAIRED);
+  if (messageRecv.order == Robot::State::ARMED) Robot::robot->setState(Robot::State::READY);
+  if (messageRecv.order == Robot::State::MATCH_STARTED) Robot::robot->setState(Robot::State::MATCH_STARTED);
+  Serial.println(Robot::robot->getState());
   Serial.println();
 }
 
-
+}

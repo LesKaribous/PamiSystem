@@ -5,12 +5,12 @@
 #include <Arduino.h>
 #include <AccelStepper.h>
 
-#include <Antenna.h>
-#include <DistanceSensor.h>
-#include <Ihm.h>
-#include <StepperMotor.h>
+#include "../Actuators/Antenna.h"
+#include "../Sensor/DistanceSensor.h"
+#include "../Ihm/Ihm.h"
+#include "../Actuators/StepperMotor.h"
 
-#include "Esp.h"
+#include "EspNowPami.h"
 #include "Control.h"
 #include "pins.h" 
 
@@ -18,7 +18,6 @@
 #define WHEEL_DISTANCE_MM 85.0f     // Distance entre les roues en millimètres
 
 namespace Robot{
-
     enum State{
             WAIT,
             RUN,
@@ -44,25 +43,35 @@ namespace Robot{
         // Position absolue du robot
         Pose currentPose  = {0.0f, 0.0f, 0.0f};
         Pose targetPose   = {0.0f, 0.0f, 0.0f};
+
         // Déplacement cible polaire
         PolarMove targetMove = {0.0f, 0.0f, 0.0f};
         bool newPolarTarget = false;
 
+        // Motors 
         std::unique_ptr<Actuator::StepperMotor> motor_D;
         std::unique_ptr<Actuator::StepperMotor> motor_G;
 
+        // Distance sensors
         Sensor::DistanceSensor distance_sensors[2];
 
         // Antenne 
         Actuator::Antenna antenna;
-        
-        // Compule wheel circumference
-        float _circumferenceMM = WHEEL_DIAMETER_MM * PI;
 
+        // EspNow
+        Com::EspNowPami _esp; 
+
+        // Ihm
+        Ihm _ihm;
+
+        // Robot's info
         State _state;
         Team _team;
         
         byte _id; // Robot's ID
+
+        // Compule wheel circumference
+        float _circumferenceMM = WHEEL_DIAMETER_MM * PI;
 
     protected:
         // Converti la position demandée vers le targetPolarMove
@@ -105,9 +114,12 @@ namespace Robot{
         void goTo(float _x, float _y);
         void goTo(float _x, float _y, float _rot);
 
-        inline bool getTirette() const {return !digitalRead(Pin::Tirette);}    
+        inline bool getTirette() const {return !digitalRead(Pin::Tirette);}
+
+        bool initEspNow();
     };
 
+    extern Pami *robot;
 }
 
 

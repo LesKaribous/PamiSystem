@@ -4,7 +4,7 @@
 #include <Wire.h>
 #include <VL53L0X.h>
 
-#include "Ihm.h"
+#include "../Ihm/Ihm.h"
 
 namespace Sensor{
     class DistanceSensor

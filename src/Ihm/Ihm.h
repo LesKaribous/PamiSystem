@@ -5,7 +5,7 @@
 #include <Adafruit_NeoPixel.h>
 #include <Wire.h>
 
-#include <Pami.h>
+#include "../Pami/Pami.h"
 
 #include "pins.h" 
 
@@ -16,12 +16,8 @@ private:
     void initLedStatus();
 
     Adafruit_NeoPixel led;
-
-    Robot::Pami *_robot;
-
 public:
     Ihm();
-    Ihm(Robot::Pami &robot);
     ~Ihm() = default;
 
     // Ihm should not be clonable
@@ -29,8 +25,6 @@ public:
 
     // Ihm should not be assignable
     void operator=(const Ihm &) = delete;
-
-    Robot::Pami& setRobot(Robot::Pami &robot);
 
     static Ihm &getInstance();
 

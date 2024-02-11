@@ -4,32 +4,32 @@
 #include <esp_now.h>
 #include <WiFi.h>
 
-#include <Ihm.h>
-#include <Pami.h>
+#include "../Ihm/Ihm.h"
 
 #include "pins.h" 
 
-// Définition variables pour ESPNow
+// Définition variables pour EspNowPami
 uint8_t PAMI_1[] = {0xF4, 0x12, 0xFA, 0x53, 0x6E, 0x60}; // Sender
 uint8_t PAMI_2[] = {0xF4, 0x12, 0xFA, 0x4C, 0x07, 0x94}; // Receiver
 uint8_t PAMI_3[] = {0xF4, 0x12, 0xFA, 0x53, 0x6D, 0x08}; // Receiver
+
+namespace Com
+{
 
 typedef struct message_struct {
   int order;
 } message_struct;
 
-class Esp // TODO change to EspNow
+class EspNowPami 
 {
 private:
     message_struct message;
     esp_now_peer_info_t peerInfo;
-
-    Robot::Pami *_robot;
 public:
-    Esp(/* args */);
-    ~Esp();
+    EspNowPami(/* args */);
+    ~EspNowPami();
 
-    bool init(Robot::Pami &robot);
+    bool init();
     void printMacAdress();
     bool BroadcastMessage(int orderMessage);
     
@@ -37,3 +37,5 @@ public:
     static void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len);
 };
 
+  
+} // namespace Com

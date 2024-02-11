@@ -3,7 +3,7 @@ namespace Robot{
 
 Pami::Pami(/* args */)
 {
-
+  robot = this;
 }
 
 Pami::~Pami()
@@ -28,6 +28,7 @@ void Pami::init(){
     motor_G->init();
 
     antenna.init(Pin::pinServo);
+    _ihm.init();
 
     enableMotors();
     antenna.up();
@@ -136,6 +137,10 @@ void Pami::convertToPolar(float _x, float _y, float _rot){
   if (targetMove.rotation2 < -180.0f) targetMove.rotation2 += 360.0f;
 
   newPolarTarget = true;
+}
+
+bool Pami::initEspNow(){
+  return _esp.init();
 }
 
 }

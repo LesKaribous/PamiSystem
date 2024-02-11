@@ -29,13 +29,6 @@ void Ihm::initLCD(){
   u8g2.clearBuffer(); // clear the internal memory
 }
 
-Robot::Pami& Ihm::setRobot(Robot::Pami &robot){
-  if(_robot != nullptr)
-    _robot = &robot;
-
-  return *_robot;
-}
-
 void Ihm::pairingScreen(){
   u8g2.clearBuffer();
   u8g2.setFont(u8g2_font_streamline_interface_essential_wifi_t);
@@ -53,7 +46,7 @@ void Ihm::pairingScreen(){
   // Mettre à jour l'écran
   u8g2.sendBuffer();
   // Wait pairing or tirette
-  while(!_robot->getTirette() && !initEspNow())
+  while(!Robot::robot->getTirette() && !Robot::robot->initEspNow())
   {
     delay(250);
   }
@@ -86,7 +79,7 @@ void Ihm::drawSplashScreen(){
 void Ihm::drawBackLcd(){
   //--------------------------------------------------------
   // Draw Bot Number
-  String stringValue = String(_robot->getID());  // Convertir le byte en String
+  String stringValue = String(Robot::robot->getID());  // Convertir le byte en String
   const char* result = stringValue.c_str();       // Convertir la String en const char*
   u8g2.setFont(u8g2_font_5x7_mf);
   u8g2.drawStr(0, 13, "bot");
@@ -106,11 +99,11 @@ Robot::Team Ihm::checkColorTeam(){
   bool temp = digitalRead(Pin::ColorTeam);
   int team = (Robot::Team)temp;
   
-  if(_robot->getTeam() != team || _robot->getTeam() == Robot::Team::UNDEFINED){
-    _robot->setTeam(Robot::Team(team));
+  if(Robot::robot->getTeam() != team || Robot::robot->getTeam() == Robot::Team::UNDEFINED){
+    Robot::robot->setTeam(Robot::Team(team));
     led.setBrightness(50);
 
-    if(_robot->getTeam() == Robot::Team::BLUE){
+    if(Robot::robot->getTeam() == Robot::Team::BLUE){
       led.setPixelColor(0,led.Color(0,0,255)); // LED en BLEU
       Ihm::getInstance().debug("Team Blue");
     }
@@ -121,5 +114,5 @@ Robot::Team Ihm::checkColorTeam(){
     led.show();
   }
 
-  return _robot->getTeam();
+  return Robot::robot->getTeam();
 }
