@@ -1,10 +1,11 @@
-#pragma once 
+#ifndef SENSOR_H
+#define SENSOR_H
 
 #include <Arduino.h>
 #include <Wire.h>
 #include <VL53L0X.h>
 
-#include "../Ihm/Ihm.h"
+#include "Ihm/Ihm.h"
 
 namespace Sensor{
     class DistanceSensor
@@ -24,3 +25,5 @@ namespace Sensor{
         void test();
     };
 } // namespace Sensor
+
+#endif

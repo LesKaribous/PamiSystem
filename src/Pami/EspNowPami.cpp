@@ -1,4 +1,6 @@
 #include "EspNowPami.h"
+#include "Ihm/Ihm.h"
+#include "Pami.h"
 
 namespace Com{
 
@@ -48,10 +50,10 @@ bool EspNowPami::init(){
       }else{addPeerState = true;}
     } else {esp_now_register_recv_cb(OnDataRecv);}// get recv packer info
   }
-  if(initState && addPeerState && _robot->getID() == 1)
+  if(initState && addPeerState && Robot::robot->getID() == 1)
   {
-    messageState = BroadcastMessage(Robot::State::PAIRING);
-    if (messageState) _robot->setState(Robot::State::PAIRED);
+    messageState = BroadcastMessage(static_cast<int>(Robot::State::PAIRING));
+    if (messageState) Robot::robot->setState(Robot::State::PAIRED);
   }
   return initState && addPeerState && messageState;
 }
@@ -102,10 +104,10 @@ void EspNowPami::OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, in
   Serial.println(len);
   Serial.print("order: ");
   Serial.println(messageRecv.order);
-  if (messageRecv.order == Robot::State::PAIRING) Robot::robot->setState(Robot::State::PAIRED);
-  if (messageRecv.order == Robot::State::ARMED) Robot::robot->setState(Robot::State::READY);
-  if (messageRecv.order == Robot::State::MATCH_STARTED) Robot::robot->setState(Robot::State::MATCH_STARTED);
-  Serial.println(Robot::robot->getState());
+  if (messageRecv.order == static_cast<int>(Robot::State::PAIRING)) Robot::robot->setState(Robot::State::PAIRED);
+  if (messageRecv.order == static_cast<int>(Robot::State::ARMED)) Robot::robot->setState(Robot::State::READY);
+  if (messageRecv.order == static_cast<int>(Robot::State::MATCH_STARTED)) Robot::robot->setState(Robot::State::MATCH_STARTED);
+  Serial.println(static_cast<int>(Robot::robot->getState()));
   Serial.println();
 }
 

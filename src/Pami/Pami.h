@@ -1,14 +1,12 @@
-#pragma once 
-
-#include <memory.h>
+#ifndef PAMI_H
+#define PAMI_H
 
 #include <Arduino.h>
-#include <AccelStepper.h>
+#include <memory.h>
 
-#include "../Actuators/Antenna.h"
-#include "../Sensor/DistanceSensor.h"
-#include "../Ihm/Ihm.h"
-#include "../Actuators/StepperMotor.h"
+#include "Actuators/Antenna.h"
+#include "Sensor/DistanceSensor.h"
+#include "Actuators/StepperMotor.h"
 
 #include "EspNowPami.h"
 #include "Control.h"
@@ -17,11 +15,13 @@
 #define WHEEL_DIAMETER_MM 60.0f     // Diamètre de la roue en millimètres
 #define WHEEL_DISTANCE_MM 85.0f     // Distance entre les roues en millimètres
 
+class Ihm;
+
 namespace Robot{
-    enum State{
-            WAIT,
-            RUN,
-            END,
+    enum class State{
+            WAIT = 0,
+            RUN = 1,
+            END = 2,
             UNDEFINED = 99,
             PAIRING = 42,
             PAIRED = 60,
@@ -31,10 +31,10 @@ namespace Robot{
             MATCH_STARTED = 150,
         };
 
-    enum Team{
-        BLUE,
-        YELLOW,
-        UNDEFINED
+    enum class Team{
+        BLUE = 0,
+        YELLOW = 1,
+        UNDEFINED = 2
     };
 
     class Pami
@@ -123,3 +123,4 @@ namespace Robot{
 }
 
 
+#endif

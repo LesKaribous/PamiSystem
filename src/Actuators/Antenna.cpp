@@ -1,5 +1,7 @@
 #include "Antenna.h"
 
+#include "../Ihm/Ihm.h"
+
 namespace Actuator{
 
     void Antenna::init(int pin){

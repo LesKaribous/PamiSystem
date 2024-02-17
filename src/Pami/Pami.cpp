@@ -1,5 +1,8 @@
 #include "Pami.h"
+#include "Ihm/Ihm.h"
 namespace Robot{
+
+Pami* robot = nullptr;
 
 Pami::Pami(/* args */)
 {
@@ -19,6 +22,8 @@ void Pami::init(){
 
     readRobotID();
 
+    _ihm.init(Ihm::DEBUG::LCD); // Change for your need 
+
     for(size_t i = 0; i < 2; i++){
         distance_sensors[i].setShutPin(Pin::xshutPins[i]);
         distance_sensors[i].init(i);
@@ -28,7 +33,6 @@ void Pami::init(){
     motor_G->init();
 
     antenna.init(Pin::pinServo);
-    _ihm.init();
 
     enableMotors();
     antenna.up();
@@ -56,6 +60,36 @@ void Pami::go(float _dist){
   motor_G->move(stepValue);
   motor_D->move(-stepValue);
   processMove();
+}
+
+void Pami::goTo(Pose _target){
+  goTo(_target.x, _target.y, _target.rot);
+}
+
+void Pami::goTo(float _x, float _y){
+  // TODO
+  // WIP
+  // Blocking --> to be changed
+  convertToPolar(_x,_y);
+  turn(targetMove.rotation1);
+  go(targetMove.distance);
+  currentPose.setX(_x);
+  currentPose.setY(_y);
+  //currentPose.setRot(_rot); // Récupérer ou calculer la rotation d'arrivée ? IDEE -> stocker dans le convertToPolar le resultat dans targetPose
+  newPolarTarget = false;
+}
+
+void Pami::goTo(float _x, float _y, float _rot){
+  // WIP
+  // Blocking --> to be changed
+  convertToPolar(_x,_y,_rot);
+  turn(targetMove.rotation1);
+  go(targetMove.distance);
+  currentPose.setX(_x);
+  currentPose.setY(_y);
+  turn(targetMove.rotation2);
+  currentPose.setRot(_rot);
+  newPolarTarget = false;
 }
 
 void Pami::turn(float _angle){

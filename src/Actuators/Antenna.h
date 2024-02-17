@@ -3,7 +3,6 @@
 #include <Arduino.h>
 #include <Servo.h>
 
-#include "../Ihm/Ihm.h"
 
 #include "pins.h"
 
